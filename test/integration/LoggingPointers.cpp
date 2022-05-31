@@ -11,16 +11,16 @@ int main()
   int* ptr = nullptr;
   std::unique_ptr<int> uptr(std::make_unique<int>(1));
   std::shared_ptr<int> sptr(std::make_shared<int>(2));
-  BINLOG_INFO("Pointers: {} {} {}", ptr, uptr, sptr);
-  // Outputs: Pointers: {null} 1 2
+  BINLOG_INFO("Pointers: {}", ptr);
+  // Outputs: Pointers: 0x0
   //]
 
   int value = 3;
   ptr = &value;
   uptr.reset();
   sptr.reset();
-  BINLOG_INFO("Pointers: {} {} {}", ptr, uptr, sptr);
-  // Outputs: Pointers: 3 {null} {null}
+  BINLOG_INFO("Pointers: {} {}", uptr, sptr);
+  // Outputs: Pointers: 0x0 0x0
 
   // weak_ptr is not loggable by design, must be .lock()-ed first
   static_assert(

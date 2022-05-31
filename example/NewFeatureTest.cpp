@@ -37,7 +37,17 @@ int main() {
   auto streamable_object_ptr = std::make_shared<StreamableObject>();
   auto obj_unique_ptr = std::make_unique<StreamableObject>();
   NonStreamableObject non_streamable_object;
+  auto* non_streamable_object_raw_ptr = new NonStreamableObject();
   auto non_streamable_object_ptr = std::make_shared<NonStreamableObject>();
+
+  binlog::Session session;
+  binlog::SessionWriter writer(session, 128);
+  std::uintptr_t address = 0xF777123;
+  const int* const_any_pointer = nullptr;
+  const void* const_void_pointer = nullptr;
+  std::memcpy(&const_any_pointer, &address, sizeof(const_any_pointer));
+  std::memcpy(&const_void_pointer, &address, sizeof(const_void_pointer));
+  BINLOG_INFO("Raw pointer value: {}", const_any_pointer);
 
   // Basic type
   BINLOG_INFO("hello i: {}", i);
@@ -62,6 +72,7 @@ int main() {
 //  BINLOG_ERROR("{}", non_streamable_object); // Not support, compile error
 //  BINLOG_ERROR("{}", *non_streamable_object_ptr); // Not support, compile error
   BINLOG_ERROR("{}", non_streamable_object_ptr->m);
+  BINLOG_ERROR("{}", non_streamable_object_raw_ptr);
   BINLOG_ERROR("{}", non_streamable_object_ptr.get());
 
   auto *msg_header_type = new MessageHeaderType;
@@ -106,7 +117,6 @@ int main() {
   // Mixed with other types
   BINLOG_INFO("hello not_trivial: {}, {}", i, streamable_object);
   BINLOG_INFO("hello not_trivial: {}, {}, {}, {}, {}, {}", i, d, f, b, s, streamable_object);
-
 
   // New feature
 //  boost::filesystem::path test_file {__FILE__};

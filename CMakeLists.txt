@@ -227,6 +227,8 @@ add_example(MultiOutput)
   target_link_libraries(MultiOutput binlog)
 add_example(TscClock)
 
+# Only linux supports doctest
+if (NOT QNX)
 #---------------------------
 # Unit Test
 #---------------------------
@@ -245,6 +247,8 @@ add_example(TscClock)
     test/unit/mserialize/singular.cpp
     test/unit/mserialize/tag_util.cpp
 
+    test/unit/binlog/TestPointers.cpp
+    test/unit/binlog/TestStreamableObject.cpp
     test/unit/binlog/TestEventStream.cpp
     test/unit/binlog/TestTime.cpp
     test/unit/binlog/TestToStringVisitor.cpp
@@ -343,6 +347,8 @@ add_example(TscClock)
     add_inttest(LoggingBoostTypes)
       optional_include_boost(LoggingBoostTypes)
   endif()
+
+endif()
 
 #---------------------------
 # Performance Test
