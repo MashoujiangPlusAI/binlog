@@ -26,10 +26,17 @@ struct BuiltinTag
 {
   BuiltinTag() = delete; // used by has_tag
 
-  static constexpr cx_string<1> tag_string()
+  static constexpr cx_string<2> tag_string()
   {
-    static_assert(always_false<T>::value, "T has no associated tag");
-    return make_cx_string("?"); // reduce the number of errors on static assert fail
+    if (is_streamable<T>::value) {
+      return cx_strcat(
+          make_cx_string("["),
+          make_cx_string("c")
+      );
+    } else {
+      static_assert(is_streamable<T>::value, "T has no associated tag and not streamable");
+      return make_cx_string("??"); // reduce the number of errors on static assert fail
+    }
   }
 };
 

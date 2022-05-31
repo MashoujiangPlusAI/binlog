@@ -4,6 +4,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility> // pair
+#include <iostream>
 
 namespace mserialize {
 namespace detail {
@@ -106,6 +107,21 @@ struct deep_remove_const<const T<E...>> : deep_remove_const<T<E...>> {};
 
 template <typename T>
 using deep_remove_const_t = typename deep_remove_const<T>::type;
+
+namespace is_streamable_impl {
+template <typename T, typename Enable = void>
+struct check : public std::false_type {};
+
+template <typename T>
+struct check<T,
+             std::enable_if_t<std::is_same<
+                 decltype(std::declval<std::ostream&>() << std::declval<T>()),
+                 std::ostream&>::value>>
+    : public std::true_type {};
+}
+
+template <typename T>
+struct is_streamable : public std::integral_constant<bool, is_streamable_impl::check<T>::value> {};
 
 } // namespace detail
 } // namespace mserialize

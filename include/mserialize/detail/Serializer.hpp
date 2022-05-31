@@ -4,6 +4,8 @@
 #include <mserialize/detail/sequence_traits.hpp>
 #include <mserialize/detail/type_traits.hpp>
 
+#include <iostream>
+#include <sstream>
 #include <cassert>
 #include <cstdint>
 #include <ios> // streamsize (macOS)
@@ -35,15 +37,34 @@ struct BuiltinSerializer
   BuiltinSerializer() = delete; // used by is_serializable
 
   template <typename OutputStream>
-  static void serialize(const T& /* t */, OutputStream& /* ostream */)
+  static void serialize(const T& t, OutputStream& ostream)
   {
-    static_assert(always_false<T>::value, "T is not serializable");
+    if (is_streamable<T>::value) {
+      // TODO(Shoujiang): not find elegant way to preallocate memory since thread_local is not reliable
+      std::stringstream os;
+      os << t;
+      auto str = os.str();
+      auto size = str.size();
+      const auto size32 = std::uint32_t(size);
+      assert(size32 == size && "sequence size must fit on 32 bits");
+
+      mserialize::serialize(size32, ostream);
+      ostream.write(str.c_str(), static_cast<long int>(size));
+    } else {
+      static_assert(is_streamable<T>::value, "T is not serializable");
+    }
   }
 
-  static std::size_t serialized_size(const T& /* t */)
+  static std::size_t serialized_size(const T& t)
   {
-    static_assert(always_false<T>::value, "T is not serializable");
-    return 0; // reduce the number of errors on static assert fail
+    if (is_streamable<T>::value) {
+      std::ostringstream os;
+      os << t;
+      return sizeof(std::uint32_t) + os.str().size();
+    } else {
+      static_assert(is_streamable<T>::value, "T is not serializable");
+      return 0; // reduce the number of errors on static assert fail
+    }
   }
 };
 

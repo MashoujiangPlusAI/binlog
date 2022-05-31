@@ -216,6 +216,7 @@ function(add_example name)
   target_link_libraries(${name} headers)
 endfunction()
 
+add_example(NewFeatureTest)
 add_example(HelloWorld)
 add_example(DetailedHelloWorld)
 add_example(ConsumeLoop)

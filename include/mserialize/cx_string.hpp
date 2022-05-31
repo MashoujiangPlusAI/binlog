@@ -100,7 +100,7 @@ constexpr auto cx_strcat(const cx_string<N>&&... strings)
     for (std::size_t s = 0; s < size[i]; ++s) { *out++ = data[i][s]; } // NOLINT
   }
 
-  return cx_string<sizeof(buffer)-1>(buffer);
+  return cx_string<detail::sum<N...>()>(buffer);
 }
 
 /** Create a cx_string from a string literal */

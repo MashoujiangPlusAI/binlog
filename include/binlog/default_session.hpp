@@ -54,13 +54,28 @@ inline Session& default_session()
  */
 inline SessionWriter& default_thread_local_writer()
 {
+#ifdef __QNX__
+  static std::vector<SessionWriter> writers;
+  static auto ret = [](){
+    for(uint32_t i = 0; i < 40; ++i) {
+      writers.emplace_back(default_session(),
+                           1 << 20, // queue capacity
+                           0,       // writer id
+                           std::to_string(i));
+    }
+    return true;
+  }();
+  (void)(ret);
+  return writers.at(std::hash<std::thread::id>{}(std::this_thread::get_id())-1);
+#else
   static thread_local SessionWriter s_writer(
-    default_session(),
-    1 << 20, // queue capacity
-    0,       // writer id
-    detail::this_thread_id_string() // writer name
-  );
+      default_session(),
+      1 << 20, // queue capacity
+      0,       // writer id
+      detail::this_thread_id_string() // writer name
+      );
   return s_writer;
+#endif
 }
 
 /**

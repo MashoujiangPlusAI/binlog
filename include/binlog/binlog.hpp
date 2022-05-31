@@ -12,5 +12,8 @@
 #include <binlog/adapt_struct.hpp>
 #include <binlog/basic_log_macros.hpp>
 #include <binlog/const_char_ptr_is_string.hpp>
+#include <binlog/adapt_stderrorcode.hpp>
+#include <binlog/adapt_stdtimepoint.hpp>
+#include <binlog/adapt_stdduration.hpp>
 
 #endif // BINLOG_BINLOG_HPP

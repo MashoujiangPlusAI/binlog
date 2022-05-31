@@ -2,7 +2,9 @@
 #define BINLOG_ADDRESS_HPP
 
 #include <binlog/adapt_struct.hpp>
+#include <mserialize/detail/type_traits.hpp>
 
+#include <memory>
 #include <cstdint> // uintptr_t
 #include <cstring> // memcpy
 
@@ -65,6 +67,40 @@ struct CustomTag<void*> : CustomTag<binlog::address> {};
 
 template <>
 struct CustomTag<const void*> : CustomTag<binlog::address> {};
+
+// Log all pointer as address, without extra decoration
+template <typename T>
+struct CustomSerializer<T, detail::enable_spec_if<std::is_pointer<T>>>: CustomSerializer<void*>{};
+
+template <typename T>
+struct CustomTag<T, detail::enable_spec_if<std::is_pointer<T>>> : CustomTag<binlog::address> {};
+
+
+// Log shared_ptr as address, without extra decoration
+template <typename T>
+struct is_shared_ptr: std::false_type {};
+
+template <typename T>
+struct is_shared_ptr<std::shared_ptr<T>>: std::true_type {};
+
+template <typename T>
+struct CustomSerializer<T, detail::enable_spec_if<is_shared_ptr<T>>> {
+  template <typename OutputStream>
+  static void serialize(const T pointer, OutputStream& ostream)
+  {
+    std::uint64_t value;
+    auto addr = pointer.get();
+    memcpy(&value, &addr, sizeof(value));
+    mserialize::serialize(value, ostream);
+  }
+
+  static std::size_t serialized_size(const T)
+  {
+    return sizeof(std::uint64_t);
+  }
+};
+template <typename T>
+struct CustomTag<T, detail::enable_spec_if<is_shared_ptr<T>>> : CustomTag<binlog::address> {};
 
 } // namespace mserialize
 

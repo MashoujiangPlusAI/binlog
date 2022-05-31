@@ -86,8 +86,8 @@ template <typename Integer, Integer V>
 constexpr cx_string<hex_string_size(V)> integer_to_hex()
 {
   char buffer[hex_string_size(V)] = {0};
-  write_integer_as_hex(V, std::end(buffer));
-  return cx_string<sizeof(buffer)>(buffer);
+  write_integer_as_hex(V, buffer+hex_string_size(V));
+  return cx_string<hex_string_size(V)>(buffer);
 }
 
 } // namespace detail
