@@ -35,6 +35,7 @@ int main() {
   const auto const_int_ptr = std::make_shared<int>();
   StreamableObject streamable_object;
   auto streamable_object_ptr = std::make_shared<StreamableObject>();
+  auto obj_unique_ptr = std::make_unique<StreamableObject>();
   NonStreamableObject non_streamable_object;
   auto non_streamable_object_ptr = std::make_shared<NonStreamableObject>();
 
@@ -89,11 +90,18 @@ int main() {
   BINLOG_INFO("hello ptr metadata: {}", int_ptr.get());
   BINLOG_INFO("hello ptr metadata: {}", static_cast<void*>(int_ptr.get()));
   BINLOG_INFO("hello ptr metadata: {}", static_cast<const void*>(int_ptr.get()));
+
   BINLOG_INFO("hello ptr: {}", binlog::address(const_int_ptr.get()));
   BINLOG_INFO("hello ptr metadata: {}", const_int_ptr);
   BINLOG_INFO("hello ptr metadata: {}", const_int_ptr.get());
   BINLOG_INFO("hello ptr metadata: {}", static_cast<void*>(const_int_ptr.get()));
   BINLOG_INFO("hello ptr metadata: {}", static_cast<const void*>(const_int_ptr.get()));
+
+  BINLOG_INFO("hello ptr: {}", binlog::address(obj_unique_ptr.get()));
+  BINLOG_INFO("hello ptr metadata: {}", obj_unique_ptr);
+  BINLOG_INFO("hello ptr metadata: {}", obj_unique_ptr.get());
+  BINLOG_INFO("hello ptr metadata: {}", static_cast<void*>(obj_unique_ptr.get()));
+  BINLOG_INFO("hello ptr metadata: {}", static_cast<const void*>(obj_unique_ptr.get()));
 
   // Mixed with other types
   BINLOG_INFO("hello not_trivial: {}, {}", i, streamable_object);
