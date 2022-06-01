@@ -18,9 +18,9 @@ TEST_CASE("add_event")
   binlog::SessionWriter writer(session, 128);
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    1, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   CHECK(writer.addEvent(eventSource.id, 0, 456, std::string("foo")));
 
@@ -33,9 +33,9 @@ TEST_CASE("add_event_with_time")
   binlog::SessionWriter writer(session, 128);
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    2, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   const auto now = std::chrono::system_clock::now();
   const auto clock = std::uint64_t(now.time_since_epoch().count());
@@ -50,9 +50,9 @@ TEST_CASE("set_clock_sync_and_add_event_with_time")
   binlog::SessionWriter writer(session, 128);
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    3, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   const binlog::ClockSync clockSync{0, 1, 100 * std::nano::den, 0, "UTC"};
   session.setClockSync(clockSync);
@@ -69,9 +69,9 @@ TEST_CASE("reset_clock_sync_and_add_events_with_time")
   TestStream stream;
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    4, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   const binlog::ClockSync clockSync{0, 1, 100 * std::nano::den, 0, "UTC"};
   session.setClockSync(clockSync);
@@ -96,9 +96,9 @@ TEST_CASE("add_event_with_writer_id_name")
   binlog::SessionWriter writer(session, 128);
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    5, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   writer.setId(111);
   writer.setName("John");
@@ -113,9 +113,9 @@ TEST_CASE("add_event_with_writer_id_name_ctor")
   binlog::SessionWriter writer(session, 128, 111, "John");
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    6, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   CHECK(writer.addEvent(eventSource.id, 0, 456, std::string("foo")));
 
@@ -132,9 +132,9 @@ TEST_CASE("add_event_then_close")
     binlog::SessionWriter writer(session, 128);
 
     binlog::EventSource eventSource{
-      0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+      7, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
     };
-    eventSource.id = session.addEventSource(eventSource);
+    session.addEventSource(eventSource);
 
     CHECK(writer.addEvent(eventSource.id, 0, 456, std::string("foo")));
   }
@@ -148,9 +148,9 @@ TEST_CASE("consume_metadata_twice")
   binlog::SessionWriter writer(session, 128);
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    8, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   CHECK(writer.addEvent(eventSource.id, 0, 123, std::string("foo")));
   getEvents(session, ""); // consume metadata and data
@@ -175,9 +175,9 @@ TEST_CASE("sources_first")
   // Add EventSource 1 from writer 1, add Event using EventSource 2
   {
     binlog::EventSource eventSource{
-      0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+      9, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
     };
-    eventSource.id = session.addEventSource(eventSource);
+    session.addEventSource(eventSource);
 
     CHECK(writer1.addEvent(eventSource.id, 0, 456, std::string("foo")));
   }
@@ -185,9 +185,9 @@ TEST_CASE("sources_first")
   // Add EventSource 2 from writer 2, add Event using EventSource 1
   {
     binlog::EventSource eventSource{
-      0, binlog::Severity::info, "cat", "fun", "file", 123, "c={} d={}", "y[i"
+      10, binlog::Severity::info, "cat", "fun", "file", 123, "c={} d={}", "y[i"
     };
-    eventSource.id = session.addEventSource(eventSource);
+    session.addEventSource(eventSource);
 
     CHECK(writer2.addEvent(eventSource.id, 0, true, std::vector<int>{1,2,3}));
   }
@@ -205,9 +205,9 @@ TEST_CASE("add_events_from_threads")
   binlog::Session session;
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={}", "i"
+    11, binlog::Severity::info, "cat", "fun", "file", 123, "a={}", "i"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   auto writeEvents = [&eventSource, &session](const char* name)
   {
@@ -275,9 +275,9 @@ TEST_CASE("queue_is_full")
   writer.setName("Seven");
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={}", "[i"
+    12, binlog::Severity::info, "cat", "fun", "file", 123, "a={}", "[i"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   // add more data that would otherwise fit in the queue
   for (int i = 0; i < 256; ++i)
@@ -320,9 +320,9 @@ TEST_CASE("move_ctor")
 
   // channel is still operational
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    13, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   CHECK(writer.addEvent(eventSource.id, 0, 456, std::string("foo")));
 
@@ -339,9 +339,9 @@ TEST_CASE("move_assign")
   writer2.setName("W2");
 
   binlog::EventSource eventSource{
-    0, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
+    14, binlog::Severity::info, "cat", "fun", "file", 123, "a={} b={}", "i[c"
   };
-  eventSource.id = session.addEventSource(eventSource);
+  session.addEventSource(eventSource);
 
   CHECK(writer1.addEvent(eventSource.id, 0, 123, std::string("foo")));
   CHECK(writer2.addEvent(eventSource.id, 0, 456, std::string("bar")));

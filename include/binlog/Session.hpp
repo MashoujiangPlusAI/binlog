@@ -115,10 +115,8 @@ public:
    * (addEventSource happens before addEvent)
    * are guaranteed to be consumed after the event source
    * by `Session::consume`.
-   *
-   * @returns the id assigned to the added event source
    */
-  std::uint64_t addEventSource(EventSource eventSource);
+  void addEventSource(EventSource eventSource);
 
   /** @returns Severity below writers should not add events */
   Severity minSeverity() const;
@@ -196,7 +194,6 @@ private:
   detail::RecoverableVectorOutputStream _clockSync = {0xFE214F726E35BDBC, this};
   detail::RecoverableVectorOutputStream _sources = {0xFE214F726E35BDBC, this};
   std::streamsize _sourcesConsumePos = 0;
-  std::uint64_t _nextSourceId = 1;
 
   std::size_t _totalConsumedBytes = 0;
 
@@ -275,13 +272,10 @@ inline void Session::setChannelWriterName(Channel& channel, std::string name)
   channel.writerProp.name = std::move(name);
 }
 
-inline std::uint64_t Session::addEventSource(EventSource eventSource)
+inline void Session::addEventSource(EventSource eventSource)
 {
   std::lock_guard<std::mutex> lock(_mutex);
-
-  eventSource.id = _nextSourceId;
   serializeSizePrefixedTagged(eventSource, _sources);
-  return _nextSourceId++;
 }
 
 inline Severity Session::minSeverity() const

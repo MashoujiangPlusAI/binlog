@@ -10,6 +10,7 @@
 
 #include <atomic>
 #include <cstdint>
+#include <functional>
 #include <type_traits> // integral_constant
 #include <utility> // forward
 
@@ -35,6 +36,10 @@
  *
  * TODO(benedek) perf: do not instantiate a full EventSource
  */
+#define LINESTR1(file, line) file ":" #line
+#define LINESTR(file, line) LINESTR1(file, line)
+#define LOGLINE LINESTR(__FILE__, __LINE__)
+
 #define BINLOG_CREATE_SOURCE_AND_EVENT(writer, severity, category, clock, /* format, */ ...) \
   do {                                                                                       \
     static_assert(                                                                           \
@@ -46,8 +51,12 @@
     std::uint64_t _binlog_sid_v = _binlog_sid.load(std::memory_order_relaxed);               \
     if (_binlog_sid_v == 0)                                                                  \
     {                                                                                        \
-      _binlog_sid_v = writer.session().addEventSource(binlog::EventSource{                   \
-        0, severity, #category, __func__, __FILE__, std::uint64_t(__LINE__), MSERIALIZE_FIRST(__VA_ARGS__), /* NOLINT */ \
+      std::uint64_t hash1 = std::hash<std::string>{}(std::string{LOGLINE});                  \
+      std::uint64_t hash2 = std::hash<std::string>{}(std::string{MSERIALIZE_FIRST(__VA_ARGS__)});     \
+      std::uint64_t hash3 = std::hash<std::string>{}(std::string{binlog::detail::concatenated_tags(__VA_ARGS__).data()}); \
+      _binlog_sid_v = ((hash1 >> 32) ^ (hash2 >> 16) ^ hash3) >> 1;                                 \
+      writer.session().addEventSource(binlog::EventSource{                   \
+        _binlog_sid_v, severity, #category, __func__, __FILE__, std::uint64_t(__LINE__), MSERIALIZE_FIRST(__VA_ARGS__), /* NOLINT */ \
         binlog::detail::concatenated_tags(__VA_ARGS__).data()                                /* NOLINT */ \
       });                                                                                    \
       _binlog_sid.store(_binlog_sid_v);                                                      \
