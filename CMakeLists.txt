@@ -227,8 +227,6 @@ add_example(MultiOutput)
   target_link_libraries(MultiOutput binlog)
 add_example(TscClock)
 
-# Only linux supports doctest
-if (NOT QNX)
 #---------------------------
 # Unit Test
 #---------------------------
@@ -297,7 +295,7 @@ if (NOT QNX)
       DOCTEST_CONFIG_SUPER_FAST_ASSERTS
       DOCTEST_CONFIG_NO_MULTI_LANE_ATOMICS
     )
-    target_link_libraries(IntegrationTest headers boost_system)
+    target_link_libraries(IntegrationTest headers)
     target_include_directories(IntegrationTest SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test) # for doctest/doctest.h
     set_target_properties(IntegrationTest PROPERTIES CXX_CLANG_TIDY "")
 
@@ -347,8 +345,6 @@ if (NOT QNX)
     add_inttest(LoggingBoostTypes)
       optional_include_boost(LoggingBoostTypes)
   endif()
-
-endif()
 
 #---------------------------
 # Performance Test

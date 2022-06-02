@@ -25,7 +25,7 @@ namespace mserialize {
 template <typename Visitor, typename InputStream>
 void visit(string_view tag, Visitor& visitor, InputStream& istream)
 {
-  detail::visit_impl(tag, tag, visitor, istream, 2048);
+  detail::visit_impl(tag, tag, visitor, istream, 1024);
 }
 
 } // namespace mserialize

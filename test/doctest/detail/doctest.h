@@ -403,38 +403,40 @@ DOCTEST_GCC_SUPPRESS_WARNING_POP
 // to detect if libc++ is being used with clang (the _LIBCPP_VERSION identifier)
 #include <ciso646>
 #endif // clang
+#include <iosfwd>
+#include <cstddef>
+#include <ostream>
+// #ifdef _LIBCPP_VERSION
+// #define DOCTEST_STD_NAMESPACE_BEGIN _LIBCPP_BEGIN_NAMESPACE_STD
+// #define DOCTEST_STD_NAMESPACE_END _LIBCPP_END_NAMESPACE_STD
+// #else // _LIBCPP_VERSION
+// #define DOCTEST_STD_NAMESPACE_BEGIN namespace std {
+// #define DOCTEST_STD_NAMESPACE_END }
+// #endif // _LIBCPP_VERSION
 
-#ifdef _LIBCPP_VERSION
-#define DOCTEST_STD_NAMESPACE_BEGIN _LIBCPP_BEGIN_NAMESPACE_STD
-#define DOCTEST_STD_NAMESPACE_END _LIBCPP_END_NAMESPACE_STD
-#else // _LIBCPP_VERSION
-#define DOCTEST_STD_NAMESPACE_BEGIN namespace std {
-#define DOCTEST_STD_NAMESPACE_END }
-#endif // _LIBCPP_VERSION
+// // Forward declaring 'X' in namespace std is not permitted by the C++ Standard.
+// DOCTEST_MSVC_SUPPRESS_WARNING_WITH_PUSH(4643)
 
-// Forward declaring 'X' in namespace std is not permitted by the C++ Standard.
-DOCTEST_MSVC_SUPPRESS_WARNING_WITH_PUSH(4643)
-
-DOCTEST_STD_NAMESPACE_BEGIN // NOLINT (cert-dcl58-cpp)
-typedef decltype(nullptr) nullptr_t;
-template <class charT>
-struct char_traits;
-template <>
-struct char_traits<char>;
-template <class charT, class traits>
-class basic_ostream;
-typedef basic_ostream<char, char_traits<char>> ostream;
-template <class... Types>
-class tuple;
-#if DOCTEST_MSVC >= DOCTEST_COMPILER(19, 20, 0)
-// see this issue on why this is needed: https://github.com/onqtam/doctest/issues/183
-template <class _Ty>
-class allocator;
-template <class _Elem, class _Traits, class _Alloc>
-class basic_string;
-using string = basic_string<char, char_traits<char>, allocator<char>>;
-#endif // VS 2019
-DOCTEST_STD_NAMESPACE_END
+// DOCTEST_STD_NAMESPACE_BEGIN // NOLINT (cert-dcl58-cpp)
+// typedef decltype(nullptr) nullptr_t;
+// template <class charT>
+// struct char_traits;
+// template <>
+// struct char_traits<char>;
+// template <class charT, class traits>
+// class basic_ostream;
+// typedef basic_ostream<char, char_traits<char>> ostream;
+// template <class... Types>
+// class tuple;
+// #if DOCTEST_MSVC >= DOCTEST_COMPILER(19, 20, 0)
+// // see this issue on why this is needed: https://github.com/onqtam/doctest/issues/183
+// template <class _Ty>
+// class allocator;
+// template <class _Elem, class _Traits, class _Alloc>
+// class basic_string;
+// using string = basic_string<char, char_traits<char>, allocator<char>>;
+// #endif // VS 2019
+// DOCTEST_STD_NAMESPACE_END
 
 DOCTEST_MSVC_SUPPRESS_WARNING_POP
 

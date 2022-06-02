@@ -520,6 +520,7 @@ TEST_CASE("largeEnumClass")
   CHECK(in == out);
 }
 
+#ifndef __QNX__
 TEST_CASE("errorOnEof")
 {
   int out;
@@ -543,6 +544,7 @@ TEST_CASE("errorOnIncomplete")
     std::exception
   );
 }
+#endif
 
 struct Person
 {

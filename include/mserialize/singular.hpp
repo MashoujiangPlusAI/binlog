@@ -27,7 +27,7 @@ namespace mserialize {
  *   to prevent stack overflow.
  * @return true if `tag` is singular
  */
-inline bool singular(string_view full_tag, string_view tag, int max_recursion = 2048)
+inline bool singular(string_view full_tag, string_view tag, int max_recursion = 1024)
 {
   return detail::singular_impl(full_tag, tag, max_recursion);
 }

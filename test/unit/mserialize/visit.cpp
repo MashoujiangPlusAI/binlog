@@ -457,7 +457,7 @@ TEST_CASE("tuple_of_recursive_struct")
 
 TEST_CASE("deeply_nested_seq_tag")
 {
-  const int max_recursion = 2047;
+  const int max_recursion = 1023;
 
   // works
   {
@@ -495,7 +495,7 @@ TEST_CASE("deeply_nested_seq_tag")
 
 TEST_CASE("deeply_nested_tuple_tag")
 {
-  const int max_recursion = 2047;
+  const int max_recursion = 1023;
 
   // works
   {
@@ -525,7 +525,7 @@ TEST_CASE("deeply_nested_tuple_tag")
 
 TEST_CASE("deeply_nested_variant_tag")
 {
-  const int max_recursion = 2047;
+  const int max_recursion = 1023;
 
   // works
   {
