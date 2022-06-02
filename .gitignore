@@ -4,3 +4,6 @@ Release/
 Sanitized/
 Coverage/
 __pycache__
+
+.idea
+cmake-build-*
