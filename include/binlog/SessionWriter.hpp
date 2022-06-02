@@ -81,6 +81,13 @@ public:
   void setName(std::string name);
 
   /**
+   * Get the session writer name
+   *
+   * @return this session writer name
+   */
+  const std::string& getName();
+
+  /**
    * Add a log event to the queue of the underlying channel.
    *
    * First, it computes the serialized size of the event,
@@ -118,6 +125,7 @@ private:
   Session* _session;
   std::shared_ptr<Session::Channel> _channel;
   detail::QueueWriter _qw;
+  std::string _name;
 };
 
 inline SessionWriter::SessionWriter(Session& session, std::size_t queueCapacity, std::uint64_t id, std::string name)
@@ -136,7 +144,12 @@ inline void SessionWriter::setId(std::uint64_t id)
 
 inline void SessionWriter::setName(std::string name)
 {
+  _name = name;
   _session->setChannelWriterName(*_channel, std::move(name));
+}
+
+inline const std::string& SessionWriter::getName() {
+  return _name;
 }
 
 template <typename... Args>

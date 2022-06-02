@@ -61,12 +61,16 @@ inline SessionWriter& default_thread_local_writer()
       writers.emplace_back(default_session(),
                            1 << 20, // queue capacity
                            0,       // writer id
-                           std::to_string(i));
+                           "");  // Will be updated by used thread
     }
     return true;
   }();
   (void)(ret);
-  return writers.at(std::hash<std::thread::id>{}(std::this_thread::get_id())-1);
+  auto& thread_writer = writers.at(std::hash<std::thread::id>{}(std::this_thread::get_id())-1);
+  if (thread_writer.getName().empty()) {
+    thread_writer.setName(detail::this_thread_id_string()); // Update thread id
+  }
+  return thread_writer;
 #else
   static thread_local SessionWriter s_writer(
       default_session(),
