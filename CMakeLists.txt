@@ -245,6 +245,7 @@ add_example(TscClock)
     test/unit/mserialize/singular.cpp
     test/unit/mserialize/tag_util.cpp
 
+    test/unit/binlog/TestMultiThread.cpp
     test/unit/binlog/TestPointers.cpp
     test/unit/binlog/TestStreamableObject.cpp
     test/unit/binlog/TestEventStream.cpp
