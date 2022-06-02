@@ -1,4 +1,5 @@
 #include <binlog/binlog.hpp>
+#include <binlog/adapt_plus_type.hpp>
 
 #include <boost/container/deque.hpp>
 #include <boost/container/flat_map.hpp>
@@ -70,6 +71,17 @@ int main()
   boost::optional<int> bemptyOpt;
   BINLOG_INFO("Boost optionals: {} {}", bopt, bemptyOpt);
   // Outputs: Boost optionals: 123 {null}
+
+  // Boost filesystem
+  boost::filesystem::path this_file {"/not/exist/path/file.txt"};
+  BINLOG_INFO("Boost file path: {}", this_file);
+  // Outputs: Boost file path: boost::filesystem::path{ str: /not/exist/path/file.txt }
+
+  // Boost error_code
+//  boost::system::error_code error_code;
+//  auto exist = boost::filesystem::exists(this_file, error_code);
+//  (void)(exist);
+//  BINLOG_INFO("Boost file path {}: error_code ({})", this_file, error_code);
 
   binlog::consume(std::cout);
   return 0;

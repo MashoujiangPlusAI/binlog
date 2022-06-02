@@ -289,7 +289,7 @@ if (NOT QNX)
 #---------------------------
 # Integration Test
 #---------------------------
-
+  add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
   message(STATUS "Build integration tests")
 
   add_executable(IntegrationTest test/integration/IntegrationTest.cpp)
@@ -297,7 +297,7 @@ if (NOT QNX)
       DOCTEST_CONFIG_SUPER_FAST_ASSERTS
       DOCTEST_CONFIG_NO_MULTI_LANE_ATOMICS
     )
-    target_link_libraries(IntegrationTest headers)
+    target_link_libraries(IntegrationTest headers boost_system)
     target_include_directories(IntegrationTest SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test) # for doctest/doctest.h
     set_target_properties(IntegrationTest PROPERTIES CXX_CLANG_TIDY "")
 
