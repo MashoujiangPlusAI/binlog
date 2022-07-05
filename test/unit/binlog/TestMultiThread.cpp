@@ -15,15 +15,21 @@
 TEST_CASE("multi_thread")
 {
   binlog::Session session;
-  binlog::SessionWriter writer(session, 128);
 
   std::vector<std::thread> threads;
   uint64_t num_threads = std::thread::hardware_concurrency();
   threads.reserve(num_threads);
   static const std::string array[] = {"foo", "bar", "baz", "qux"};
   for (uint64_t i = 0; i < num_threads; ++i) {
-    threads.emplace_back([&writer](){
-      BINLOG_INFO_W(writer, "Strings: {}", binlog::array_view(array, 4));
+    threads.emplace_back([&session, i](){
+      // FIXME(Shoujiang): don't use thread_local in QNX
+      static thread_local binlog::SessionWriter s_writer(
+          session,
+          1 << 20, // queue capacity
+          0,       // writer id
+          std::to_string(i) // writer name
+      );
+      BINLOG_INFO_W(s_writer, "Strings: {}", binlog::array_view(array, 4));
     });
   }
 
@@ -46,7 +52,6 @@ TEST_CASE("multi_thread")
 TEST_CASE("multi_thread_sequence_check")
 {
   binlog::Session session;
-  binlog::SessionWriter writer(session, 128);
 
   std::vector<std::thread> threads;
   uint64_t num_threads = std::thread::hardware_concurrency();
@@ -54,9 +59,16 @@ TEST_CASE("multi_thread_sequence_check")
   uint64_t num_loops {3};
   threads.reserve(num_threads);
   for (uint64_t i = 0; i < num_threads; ++i) {
-    threads.emplace_back([&writer, num_loops, i](){
+    threads.emplace_back([&session, num_loops, i](){
+      // FIXME(Shoujiang): don't use thread_local in QNX
+      static thread_local binlog::SessionWriter s_writer(
+          session,
+          1 << 20, // queue capacity
+          0,       // writer id
+          std::to_string(i) // writer name
+      );
       for (uint64_t j = 0; j < num_loops; ++j) {
-        BINLOG_INFO_W(writer, "Thread {}: {}", i, j);
+        BINLOG_INFO_W(s_writer, "Thread {}: {}", i, j);
       }
     });
   }
