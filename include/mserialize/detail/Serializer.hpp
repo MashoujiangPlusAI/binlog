@@ -39,7 +39,7 @@ struct BuiltinSerializer
   template <typename OutputStream>
   static void serialize(const T& t, OutputStream& ostream)
   {
-    if (is_streamable<T>::value) {
+      static_assert(is_streamable<T>::value, "T is not serializable");
       // TODO(Shoujiang): not find elegant way to preallocate memory since thread_local is not reliable
       std::stringstream os;
       os << t;
@@ -50,9 +50,6 @@ struct BuiltinSerializer
 
       mserialize::serialize(size32, ostream);
       ostream.write(str.c_str(), static_cast<long int>(size));
-    } else {
-      static_assert(is_streamable<T>::value, "T is not serializable");
-    }
   }
 
   static std::size_t serialized_size(const T& t)

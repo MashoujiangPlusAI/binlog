@@ -115,7 +115,7 @@ struct check : public std::false_type {};
 template <typename T>
 struct check<T,
              std::enable_if_t<std::is_same<
-                 decltype(std::declval<std::ostream&>() << std::declval<T>()),
+                 decltype(std::declval<std::ostream>() << std::declval<T>()),
                  std::ostream&>::value>>
     : public std::true_type {};
 }
